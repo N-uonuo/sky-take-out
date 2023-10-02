@@ -25,5 +25,11 @@ public interface EmployeeMapper {
 
     Page<Employee> pageQuery(EmployeePageQueryDTO employeePageQueryDTO);
 
+
+    void update(Employee employee);
+
+    //根据id查询员工
+    @Select("select * from sky_take_out.employee where id=#{id}")
+    Employee getById(Long id);
 }
-//最新javaweb课程的08-15讲了如何设置注解内SQL语句的自动补全，可以看看
+//最新javaWeb课程的08-15讲了如何设置注解内SQL语句的自动补全，可以看看

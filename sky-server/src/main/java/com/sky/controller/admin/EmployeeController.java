@@ -86,7 +86,12 @@ public class EmployeeController {
         return Result.success();
     }
 
-    //TODO 该方法返回类型目前是Result，但教学是PageResult，后续可能需要修改
+    /**
+     * 分页查询员工表
+     *
+     * @param employeePageQueryDTO
+     * @return
+     */
     @GetMapping("/page")
     @ApiOperation(value = "分页查询员工表")
     public Result<PageResult> page(EmployeePageQueryDTO employeePageQueryDTO) {
@@ -96,5 +101,45 @@ public class EmployeeController {
 
     }
 
+    /**
+     *启用禁用员工账号
+     *
+     * @param id
+     * @param status
+     * @return
+     */
+    @PostMapping("/status/{status}")
+    @ApiOperation("启用禁用员工账号")
+    public Result startOrStop(@PathVariable Integer status, Long id){
+        log.info("启用禁用员工账号：{},{}",id,status);
+        employeeService.startOrStop(id,status);
+        return Result.success();
+    }
+
+    /**
+     * 根据id查询员工
+     * @param id
+     * @return
+     */
+    @GetMapping("/{id}")
+    @ApiOperation("根据id查询员工")
+    public Result<Employee> getById(@PathVariable Long id){
+        log.info("根据id查询员工：{}",id);
+        Employee employee = employeeService.getById(id);
+        return Result.success(employee);
+    }
+
+    /**
+     * 修改员工
+     * @param employeeDTO
+     * @return
+     */
+    @PutMapping
+    @ApiOperation("修改员工")
+    public Result update(@RequestBody EmployeeDTO employeeDTO){
+        log.info("修改员工：{}",employeeDTO);
+        employeeService.update(employeeDTO);
+        return Result.success();
+    }
 
 }

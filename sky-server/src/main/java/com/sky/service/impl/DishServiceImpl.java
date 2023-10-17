@@ -30,7 +30,6 @@ import java.util.List;
 
 @Service
 @Slf4j
-
 public class DishServiceImpl implements DishService {
 
     @Autowired
@@ -142,5 +141,15 @@ public class DishServiceImpl implements DishService {
             //批量插入菜品口味数据
             dishFlavorMapper.batchInsert(flavors);
         }
+    }
+
+    //根据分类id查询菜品
+    @Override
+    public List<Dish> list(Long categoryId) {
+        Dish dish = new Dish();
+        dish.setCategoryId(categoryId);
+        dish.setStatus(StatusConstant.ENABLE);
+        List<Dish> list = dishMapper.list(dish);
+        return list;
     }
 }

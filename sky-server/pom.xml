@@ -115,6 +115,11 @@
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.github.pagehelper</groupId>
+            <artifactId>pagehelper-spring-boot</artifactId>
+            <version>1.4.6</version>
+        </dependency>
     </dependencies>
 
     <build>

@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 /**
  * 套餐
  */
-@Data
+@Data//get set toString
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

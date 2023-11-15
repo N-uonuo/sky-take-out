@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-@SpringBootApplication
+@SpringBootApplication//开启组件扫描和自动配置
 @EnableTransactionManagement //开启注解方式的事务管理
 @Slf4j
 public class SkyApplication {

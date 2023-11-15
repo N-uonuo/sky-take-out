@@ -5,15 +5,16 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class User implements Serializable {
+@Data//get set toString
+@Builder//构建对象
+@NoArgsConstructor//无参构造
+@AllArgsConstructor//全参构造
+public class User  {
 
     private static final long serialVersionUID = 1L;
 

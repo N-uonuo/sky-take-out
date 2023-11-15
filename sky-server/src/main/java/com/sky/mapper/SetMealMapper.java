@@ -51,4 +51,5 @@ public interface SetMealMapper {
     @Delete("delete from sky_take_out.setmeal where id = #{setmealId}")
     void deleteById(Long setmealId);
 
+    void update(Setmeal setmeal);
 }

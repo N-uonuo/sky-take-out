@@ -92,7 +92,7 @@ public class SetMealServiceImpl implements SetMealService {
         //判断该套餐是否在起售中
         ids.stream().forEach(id -> {
             Setmeal setmeal = setmealMapper.getById(id);
-            if (setmeal==null){
+            if (setmeal == null) {
                 throw new DeletionNotAllowedException(MessageConstant.SETMEAL_IS_NULL);
             }
             if (setmeal.getStatus() == StatusConstant.ENABLE) {
@@ -104,6 +104,48 @@ public class SetMealServiceImpl implements SetMealService {
                 setmealDishMapper.deleteBySetmealId(id);
             }
         });
+    }
+
+    /**
+     * 根据id查询套餐和套餐菜品关系
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    public SetmealVO getByIdWithDish(Long id) {
+        //根据id查询套餐
+        Setmeal setmeal = setmealMapper.getById(id);
+        //根据套餐id查询套餐和菜品的关联关系
+        List<SetmealDish> setmealDishes = setmealDishMapper.getBySetmealId(id);
+        //将查询到的数据封装到vo中
+        SetmealVO setmealVO = new SetmealVO();
+        BeanUtils.copyProperties(setmeal, setmealVO);
+        setmealVO.setSetmealDishes(setmealDishes);
+
+        return setmealVO;
+    }
+
+    @Override
+    public void update(SetmealDTO setmealDTO) {
+        //将dto转换为entity
+        Setmeal setmeal = new Setmeal();
+        BeanUtils.copyProperties(setmealDTO, setmeal);
+        //更新套餐表
+        setmealMapper.update(setmeal);
+        //获取套餐id
+        Long setmealId = setmeal.getId();
+        //删除套餐和菜品的关联关系
+        setmealDishMapper.deleteBySetmealId(setmealId);
+        //获取套餐和菜品的关联关系
+        List<SetmealDish> setmealDishes = setmealDTO.getSetmealDishes();
+        //遍历关联关系，设置套餐id
+        for (SetmealDish setmealDish : setmealDishes) {
+            setmealDish.setSetmealId(setmealId);
+        }
+        //批量保存套餐和菜品的关联关系
+        setmealDishMapper.insertBatch(setmealDishes);
+
     }
 
 

@@ -40,7 +40,7 @@ public interface DishMapper {
     void deleteByIds(List<Long> ids);
 
     //根据菜品动态修改菜品
-    @AutoFill(value = OperationType.UPDATE)
+    @AutoFill(value = OperationType.UPDATE)//自动填充，修改时，自动填充修改时间，修改人
     void update(Dish dish);
 
 
@@ -51,5 +51,13 @@ public interface DishMapper {
      * @return
      */
     List<Dish> list(Dish dish);
+
+    /**
+     * 根据套餐id查询菜品
+     * @param setmealId
+     * @return
+     */
+    @Select("select a.* from sky_take_out.dish a left join sky_take_out.setmeal_dish b on a.id = b.dish_id where b.setmeal_id = #{setmealId}")
+    List<Dish> getBySetmealId(Long setmealId);
 
 }

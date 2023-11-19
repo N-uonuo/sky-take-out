@@ -23,4 +23,11 @@ public interface SetMealService {
     SetmealVO getByIdWithDish(Long id);
 
     void update(SetmealDTO setmealDTO);
+
+    /**
+     * 根据id修改套餐的起售、停售状态
+     * @param status
+     * @param id
+     */
+    void updateStatus(Integer status, Long id);
 }

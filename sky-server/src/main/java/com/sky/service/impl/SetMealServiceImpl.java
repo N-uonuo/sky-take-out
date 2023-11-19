@@ -5,9 +5,12 @@ import com.sky.constant.MessageConstant;
 import com.sky.constant.StatusConstant;
 import com.sky.dto.SetmealDTO;
 import com.sky.dto.SetmealPageQueryDTO;
+import com.sky.entity.Dish;
 import com.sky.entity.Setmeal;
 import com.sky.entity.SetmealDish;
 import com.sky.exception.DeletionNotAllowedException;
+import com.sky.exception.SetmealEnableFailedException;
+import com.sky.mapper.DishMapper;
 import com.sky.mapper.SetMealDishMapper;
 import com.sky.mapper.SetMealMapper;
 import com.sky.result.PageResult;
@@ -32,6 +35,8 @@ public class SetMealServiceImpl implements SetMealService {
     private SetMealMapper setmealMapper;
     @Autowired
     private SetMealDishMapper setmealDishMapper;
+    @Autowired
+    private DishMapper dishMapper;
 
     //新增套餐，并且新增套餐和菜品的关联关系
     @Override
@@ -127,6 +132,7 @@ public class SetMealServiceImpl implements SetMealService {
     }
 
     @Override
+    @Transactional
     public void update(SetmealDTO setmealDTO) {
         //将dto转换为entity
         Setmeal setmeal = new Setmeal();
@@ -148,6 +154,25 @@ public class SetMealServiceImpl implements SetMealService {
 
     }
 
-
+    @Override
+    public void updateStatus(Integer status, Long id) {
+        //起售套餐时，判断套餐内是否有停售菜品，有停售菜品提示"套餐内包含未启售菜品，无法启售"
+        if (status == StatusConstant.ENABLE) {
+            //根据套餐id查询套餐和菜品的关联关系
+            List<Dish> dishList = dishMapper.getBySetmealId(id);            //遍历关联关系，判断菜品状态
+            if (dishList != null && dishList.size() > 0) {
+                dishList.stream().forEach(dish -> {
+                    if(StatusConstant.DISABLE == dish.getStatus()){
+                        throw new SetmealEnableFailedException(MessageConstant.SETMEAL_ENABLE_FAILED);
+                    }
+                });
+            }
+        }
+        Setmeal setmeal = Setmeal.builder()
+                .id(id)
+                .status(status)
+                .build();
+        setmealMapper.update(setmeal);
+    }
 }
 

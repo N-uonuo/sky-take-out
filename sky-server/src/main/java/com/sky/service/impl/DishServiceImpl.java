@@ -123,6 +123,7 @@ public class DishServiceImpl implements DishService {
     }
 
     @Override
+    @Transactional//事务控制，保证数据的一致性，要么都成功，要么都失败
     public void updateWithFlavor(DishDTO dishDTO) {
         Dish dish = new Dish();
         BeanUtils.copyProperties(dishDTO, dish);

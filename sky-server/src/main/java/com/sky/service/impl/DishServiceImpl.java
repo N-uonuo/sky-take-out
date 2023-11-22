@@ -11,21 +11,17 @@ import com.sky.entity.DishFlavor;
 import com.sky.exception.DeletionNotAllowedException;
 import com.sky.mapper.DishFlavorMapper;
 import com.sky.mapper.DishMapper;
-import com.sky.mapper.SetMealDishMapper;
+import com.sky.mapper.SetmealDishMapper;
 import com.sky.result.PageResult;
-import com.sky.result.Result;
 import com.sky.service.DishService;
 import com.sky.vo.DishVO;
-import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -37,7 +33,7 @@ public class DishServiceImpl implements DishService {
     @Autowired
     private DishFlavorMapper dishFlavorMapper;
     @Autowired
-    private SetMealDishMapper setMealDishMapper;
+    private SetmealDishMapper setMealDishMapper;
 
 
     //新增菜品
@@ -152,5 +148,32 @@ public class DishServiceImpl implements DishService {
         dish.setStatus(StatusConstant.ENABLE);
         List<Dish> list = dishMapper.list(dish);
         return list;
+    }
+
+    /**
+     * 根据菜品查询对应的菜品和口味数据
+     *
+     * @param dish
+     * @return
+     */
+    @Override
+    public List<DishVO> listWithFlavor(Dish dish) {
+        List<Dish> list = dishMapper.list(dish);
+
+        ArrayList<DishVO> dishVOList = new ArrayList<>();
+
+        list.stream().forEach(dish1 -> {
+            DishVO dishVO = new DishVO();
+            //将dish1中的属性值拷贝到dishVO中,dish1是菜品表中的数据，dishVO是菜品表和菜品口味表的数据
+            BeanUtils.copyProperties(dish1, dishVO);
+            //根据菜品id查询菜品口味数据
+            List<DishFlavor> flavors = dishFlavorMapper.getByDishId(dish1.getId());
+
+            dishVO.setFlavors(flavors);
+            //将dishVO添加到集合中，add方法返回值为boolean类型，true表示添加成功，false表示添加失败
+            dishVOList.add(dishVO);
+        });
+
+        return dishVOList;
     }
 }

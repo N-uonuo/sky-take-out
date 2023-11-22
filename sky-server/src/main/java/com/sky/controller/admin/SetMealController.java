@@ -5,7 +5,7 @@ import com.sky.dto.SetmealDTO;
 import com.sky.dto.SetmealPageQueryDTO;
 import com.sky.result.PageResult;
 import com.sky.result.Result;
-import com.sky.service.SetMealService;
+import com.sky.service.SetmealService;
 import com.sky.vo.SetmealVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -22,7 +22,7 @@ import java.util.List;
 public class SetMealController {
 
     @Autowired
-    private SetMealService setmealService;
+    private SetmealService setmealService;
 
     @ApiOperation("新增套餐")
     @PostMapping

@@ -36,7 +36,7 @@
     </select>
 
 
-    <update id="update">
+    <update id="update" parameterType="dish">
         update sky_take_out.dish
         <set>
             <if test="name != null and name != ''">

@@ -72,6 +72,11 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         }
     }
 
+    /**
+     * 减少购物车
+     *
+     * @param shoppingCartDTO
+     */
     @Override
     public void sub(ShoppingCartDTO shoppingCartDTO) {
         //判断当前购物车内菜品是否已经存在

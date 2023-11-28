@@ -58,6 +58,12 @@ public class DishServiceImpl implements DishService {
         }
     }
 
+    /**
+     * 分页查询
+     *
+     * @param dishPageQueryDTO
+     * @return
+     */
     @Override
     public PageResult pageQuery(DishPageQueryDTO dishPageQueryDTO) {
         //分页查询,使用PageHelper插件,在查询之前调用PageHelper.startPage方法,传入页码和每页大小

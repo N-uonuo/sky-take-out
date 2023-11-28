@@ -223,4 +223,39 @@ public class OrderServiceImpl implements OrderService {
 
 
     }
+
+    /**
+     * 再来一单
+     *
+     * @param id
+     */
+    @Override
+    public void repetition(Long id) {
+        // 获取当前订单
+        Orders ordersDB = orderMapper.getById(id);
+
+        /*// 判断订单是否存在
+        if (ordersDB == null) {
+            throw new AddressBookBusinessException(MessageConstant.ORDER_NOT_FOUND);
+        }*/
+
+        // 查询当前用户id
+        Long userId = BaseContext.getCurrentId();
+
+        // 根据订单id查询当前订单详情
+        List<OrderDetail> orderDetails = orderDetailMapper.getByOrderId(id);
+
+        // 将订单详情中的商品信息添加到购物车
+        // TODO 反复调用insert方法，性能不好，可以考虑批量插入
+        for (OrderDetail orderDetail : orderDetails) {
+            ShoppingCart shoppingCart = new ShoppingCart();
+            BeanUtils.copyProperties(orderDetail, shoppingCart);
+            shoppingCart.setUserId(userId);
+            shoppingCart.setCreateTime(LocalDateTime.now());
+            shoppingCart.setNumber(orderDetail.getNumber());
+            shoppingCart.setAmount(orderDetail.getAmount());
+            shoppingCartMapper.insert(shoppingCart);
+        }
+    }
+
 }

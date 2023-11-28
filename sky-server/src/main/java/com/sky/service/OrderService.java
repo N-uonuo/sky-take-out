@@ -38,4 +38,7 @@ public interface OrderService {
      * @param id
      */
     void userCancelById(Long id);
+
+    void repetition(Long id);
+
 }

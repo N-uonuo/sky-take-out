@@ -25,5 +25,11 @@ public interface OrderService {
     PageResult pageQuery4User(Integer pageNum, int pageSize, Integer status);
 
 
+    /**
+     * 查询订单详情
+     *
+     * @param id
+     * @return
+     */
     OrderVO details(Long id);
 }

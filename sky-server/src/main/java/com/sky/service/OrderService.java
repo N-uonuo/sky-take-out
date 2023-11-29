@@ -1,5 +1,6 @@
 package com.sky.service;
 
+import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.dto.OrdersSubmitDTO;
 import com.sky.result.PageResult;
 import com.sky.vo.OrderSubmitVO;
@@ -24,10 +25,8 @@ public interface OrderService {
      */
     PageResult pageQuery4User(Integer pageNum, int pageSize, Integer status);
 
-
     /**
      * 查询订单详情
-     *
      * @param id
      * @return
      */
@@ -39,6 +38,17 @@ public interface OrderService {
      */
     void userCancelById(Long id);
 
+    /**
+     * 用户删除订单
+     * @param id
+     */
     void repetition(Long id);
 
+
+    /**
+     * 条件搜索订单
+     * @param ordersPageQueryDTO
+     * @return
+     */
+    PageResult conditionSearch(OrdersPageQueryDTO ordersPageQueryDTO);
 }

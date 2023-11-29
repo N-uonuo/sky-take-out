@@ -29,6 +29,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -232,22 +233,17 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void repetition(Long id) {
         // 获取当前订单
-        Orders ordersDB = orderMapper.getById(id);
-
-        /*// 判断订单是否存在
-        if (ordersDB == null) {
-            throw new AddressBookBusinessException(MessageConstant.ORDER_NOT_FOUND);
-        }*/
+        //Orders ordersDB = orderMapper.getById(id);
 
         // 查询当前用户id
-        Long userId = BaseContext.getCurrentId();
+        //Long userId = BaseContext.getCurrentId();
 
         // 根据订单id查询当前订单详情
-        List<OrderDetail> orderDetails = orderDetailMapper.getByOrderId(id);
+        //List<OrderDetail> orderDetails = orderDetailMapper.getByOrderId(id);
 
         // 将订单详情中的商品信息添加到购物车
-        // TODO 反复调用insert方法，性能不好，可以考虑批量插入
-        for (OrderDetail orderDetail : orderDetails) {
+        // td 反复调用insert方法，性能不好，可以考虑批量插入
+        /*for (OrderDetail orderDetail : orderDetails) {
             ShoppingCart shoppingCart = new ShoppingCart();
             BeanUtils.copyProperties(orderDetail, shoppingCart);
             shoppingCart.setUserId(userId);
@@ -255,7 +251,33 @@ public class OrderServiceImpl implements OrderService {
             shoppingCart.setNumber(orderDetail.getNumber());
             shoppingCart.setAmount(orderDetail.getAmount());
             shoppingCartMapper.insert(shoppingCart);
-        }
-    }
+        }*/
 
+        // 上面注释的代码是反复调用数据库插入，应改进为批量插入
+
+        // 查询当前用户id
+        Long userId = BaseContext.getCurrentId();
+
+        // 根据订单id查询当前订单详情
+        List<OrderDetail> orderDetailList = orderDetailMapper.getByOrderId(id);
+
+        int size = orderDetailList.size();
+        System.out.println("size = " + size);
+
+        // 将订单详情对象转换为购物车对象
+        List<ShoppingCart> shoppingCartList = orderDetailList.stream().map(x -> {
+            ShoppingCart shoppingCart = new ShoppingCart();
+
+            // 将原订单详情里面的菜品信息重新复制到购物车对象中
+            BeanUtils.copyProperties(x, shoppingCart, "id");//忽略id属性的复制
+            shoppingCart.setUserId(userId);
+            shoppingCart.setCreateTime(LocalDateTime.now());
+
+            return shoppingCart;
+        }).collect(Collectors.toList());
+
+        // 将购物车对象批量添加到数据库
+        shoppingCartMapper.insertBatch(shoppingCartList);
+
+    }
 }

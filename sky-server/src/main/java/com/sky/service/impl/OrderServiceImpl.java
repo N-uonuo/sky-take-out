@@ -4,6 +4,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
 import com.sky.context.BaseContext;
+import com.sky.dto.OrdersConfirmDTO;
 import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.dto.OrdersSubmitDTO;
 import com.sky.entity.AddressBook;
@@ -374,5 +375,17 @@ public class OrderServiceImpl implements OrderService {
 
         return orderStatisticsVO;
     }
+
+    @Override
+    public void confirm(OrdersConfirmDTO ordersConfirmDTO) {
+        // orders对象用于更新订单状态
+        Orders orders = Orders.builder()
+                .id(ordersConfirmDTO.getId())
+                .status(Orders.CONFIRMED)
+                .build();
+        // 更新订单状态
+        orderMapper.update(orders);
+    }
+
 
 }

@@ -31,4 +31,13 @@ public interface OrderMapper {
 
 
     void update(Orders orders);
+
+
+    /**
+     * 查询各个状态的订单数量
+     * @param deliveryInProgress
+     * @return
+     */
+    @Select("select count(*) from sky_take_out.orders where status=#{deliveryInProgress}")
+    Integer countStatus(Integer deliveryInProgress);
 }

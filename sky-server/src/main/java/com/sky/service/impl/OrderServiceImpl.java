@@ -10,6 +10,7 @@ import com.sky.entity.OrderDetail;
 import com.sky.entity.Orders;
 import com.sky.entity.ShoppingCart;
 import com.sky.exception.AddressBookBusinessException;
+import com.sky.exception.OrderBusinessException;
 import com.sky.mapper.AddressBookMapper;
 import com.sky.mapper.OrderDetailMapper;
 import com.sky.mapper.OrderMapper;
@@ -354,7 +355,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
 
-
     /**
      * 各个状态的订单数量统计
      *
@@ -378,7 +378,6 @@ public class OrderServiceImpl implements OrderService {
 
     /**
      * 接单
-     *
      */
     @Override
     public void confirm(OrdersConfirmDTO ordersConfirmDTO) {
@@ -393,7 +392,6 @@ public class OrderServiceImpl implements OrderService {
 
     /**
      * 拒单
-     *
      */
     @Override
     public void rejection(OrdersRejectionDTO ordersRejectionDTO) {
@@ -409,7 +407,7 @@ public class OrderServiceImpl implements OrderService {
         }
         //支付状态
         Integer payStatus = ordersDB.getPayStatus();
-        if(payStatus.equals(Orders.PAID)){
+        if (payStatus.equals(Orders.PAID)) {
             //TODO 调用微信支付退款接口
             log.info("申请退款：{}", ordersDB.getAmount());
         }
@@ -435,7 +433,7 @@ public class OrderServiceImpl implements OrderService {
 
         //支付状态
         Integer payStatus = ordersDB.getPayStatus();
-        if(payStatus.equals(Orders.PAID)){
+        if (payStatus.equals(Orders.PAID)) {
             //TODO 调用微信支付退款接口
             log.info("申请退款：{}", ordersDB.getAmount());
         }
@@ -475,6 +473,31 @@ public class OrderServiceImpl implements OrderService {
         Orders orders = Orders.builder()
                 .id(id)
                 .status(Orders.DELIVERY_IN_PROGRESS)
+                .build();
+        orderMapper.update(orders);
+
+
+    }
+
+    /**
+     * 完成订单
+     *
+     * @param id
+     */
+    public void complete(Long id) {
+        // 根据id查询订单
+        Orders ordersDB = orderMapper.getById(id);
+
+        // 校验订单是否存在，并且状态为4
+        if (ordersDB == null || !ordersDB.getStatus().equals(Orders.DELIVERY_IN_PROGRESS)) {
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+
+        // 更新订单状态
+        Orders orders = Orders.builder()
+                .id(id)
+                .status(Orders.COMPLETED)
+                .deliveryTime(LocalDateTime.now())
                 .build();
         orderMapper.update(orders);
 

@@ -450,6 +450,36 @@ public class OrderServiceImpl implements OrderService {
         orderMapper.update(orders);
     }
 
+    /**
+     * 派送订单
+     *
+     * @param id
+     */
+    @Override
+    public void delivery(Long id) {
+// 根据id查询订单
+        Orders ordersDB = orderMapper.getById(id);
+
+        //判断订单是否存在
+        if (ordersDB == null) {
+            throw new AddressBookBusinessException(MessageConstant.ORDER_NOT_FOUND);
+        }
+
+        //判断订单状态是否为待派送
+        //订单状态 1待付款 2待接单 3已接单 4派送中 5已完成 6已取消
+        if (!ordersDB.getStatus().equals(Orders.CONFIRMED)) {
+            throw new AddressBookBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+
+        //更新订单状态
+        Orders orders = Orders.builder()
+                .id(id)
+                .status(Orders.DELIVERY_IN_PROGRESS)
+                .build();
+        orderMapper.update(orders);
+
+
+    }
 
 
 }

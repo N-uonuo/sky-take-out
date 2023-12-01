@@ -6,6 +6,7 @@ import com.sky.constant.MessageConstant;
 import com.sky.context.BaseContext;
 import com.sky.dto.OrdersConfirmDTO;
 import com.sky.dto.OrdersPageQueryDTO;
+import com.sky.dto.OrdersRejectionDTO;
 import com.sky.dto.OrdersSubmitDTO;
 import com.sky.entity.AddressBook;
 import com.sky.entity.OrderDetail;
@@ -21,6 +22,7 @@ import com.sky.service.OrderService;
 import com.sky.vo.OrderStatisticsVO;
 import com.sky.vo.OrderSubmitVO;
 import com.sky.vo.OrderVO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,6 +37,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class OrderServiceImpl implements OrderService {
     @Autowired
     private OrderMapper orderMapper;
@@ -376,6 +379,10 @@ public class OrderServiceImpl implements OrderService {
         return orderStatisticsVO;
     }
 
+    /**
+     * 接单
+     *
+     */
     @Override
     public void confirm(OrdersConfirmDTO ordersConfirmDTO) {
         // orders对象用于更新订单状态
@@ -384,6 +391,39 @@ public class OrderServiceImpl implements OrderService {
                 .status(Orders.CONFIRMED)
                 .build();
         // 更新订单状态
+        orderMapper.update(orders);
+    }
+
+    /**
+     * 拒单
+     *
+     */
+    @Override
+    public void rejection(OrdersRejectionDTO ordersRejectionDTO) {
+       /* - 商家拒单其实就是将订单状态修改为“已取消”
+        - 只有订单处于“待接单”状态时可以执行拒单操作
+                - 商家拒单时需要指定拒单原因
+                - 商家拒单时，如果用户已经完成了支付，需要为用户退款*/
+        // 根据id查询订单
+        Orders ordersDB = orderMapper.getById(ordersRejectionDTO.getId());
+        //只有订单处于“待接单”状态时可以执行拒单操作
+        if (!ordersDB.getStatus().equals(Orders.TO_BE_CONFIRMED)) {
+            throw new AddressBookBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+        //支付状态
+        Integer payStatus = ordersDB.getPayStatus();
+        if(payStatus.equals(Orders.PAID)){
+            //TODO 调用微信支付退款接口
+            log.info("申请退款：{}", ordersDB.getAmount());
+        }
+
+        //更新订单状态
+        Orders orders = Orders.builder()
+                .id(ordersRejectionDTO.getId())
+                .status(Orders.CANCELLED)
+                .cancelReason(ordersRejectionDTO.getRejectionReason())
+                .cancelTime(LocalDateTime.now())
+                .build();
         orderMapper.update(orders);
     }
 

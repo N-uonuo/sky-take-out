@@ -141,9 +141,10 @@ public class DishServiceImpl implements DishService {
             for (DishFlavor favor : flavors) {
                 favor.setDishId(dishDTO.getId());
             }
+            //批量插入菜品口味数据
+            dishFlavorMapper.batchInsert(flavors);
         }
-        //批量插入菜品口味数据
-        dishFlavorMapper.batchInsert(flavors);
+
     }
 
     //根据分类id查询菜品

@@ -48,8 +48,16 @@ public interface OrderMapper {
 
 
 
+    //根据订单状态和下单时间查询订单
     @Select("select * from sky_take_out.orders where status=#{status} and order_time<#{orderTime}")
     List<Orders> getByStatusAndOrderTimeLT(Integer status, LocalDateTime orderTime);
 
 
+    /**
+     * 根据订单号查询订单
+     * @param orderNumber
+     * @return
+     */
+    @Select("select * from sky_take_out.orders where number=#{orderNumber}")
+    Orders getByNumber(String orderNumber);
 }

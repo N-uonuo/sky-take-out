@@ -17,6 +17,7 @@ import com.sky.mapper.OrderMapper;
 import com.sky.mapper.ShoppingCartMapper;
 import com.sky.result.PageResult;
 import com.sky.service.OrderService;
+import com.sky.vo.OrderPaymentVO;
 import com.sky.vo.OrderStatisticsVO;
 import com.sky.vo.OrderSubmitVO;
 import com.sky.vo.OrderVO;
@@ -502,6 +503,42 @@ public class OrderServiceImpl implements OrderService {
         orderMapper.update(orders);
 
 
+    }
+
+    @Override
+    public OrderPaymentVO payment(OrdersPaymentDTO ordersPaymentDTO) {
+        //订单号获取订单
+        Orders ordersDB = orderMapper.getByNumber(ordersPaymentDTO.getOrderNumber());
+
+        //判断订单是否存在
+        if (ordersDB == null) {
+            throw new AddressBookBusinessException(MessageConstant.ORDER_NOT_FOUND);
+        }
+
+        //判断订单状态是否为待付款
+        //订单状态 1待付款 2待接单 3已接单 4派送中 5已完成 6已取消
+        if (!ordersDB.getStatus().equals(Orders.PENDING_PAYMENT)) {
+            throw new AddressBookBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+
+        // 更新订单状态
+        Orders orders = Orders.builder()
+                .id(ordersDB.getId())
+                .status(Orders.TO_BE_CONFIRMED)
+                .payStatus(Orders.PAID)
+                .payMethod(ordersPaymentDTO.getPayMethod())
+                .checkoutTime(LocalDateTime.now())
+                .build();
+        orderMapper.update(orders);
+
+        OrderPaymentVO orderPaymentVO = OrderPaymentVO.builder()
+                .nonceStr("nonceStr")
+                .paySign("paySign")
+                .timeStamp("timeStamp")
+                .signType("signType")
+                .packageStr("packageStr")
+                .build();
+        return orderPaymentVO;
     }
 
 

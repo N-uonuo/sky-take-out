@@ -42,7 +42,7 @@
     </update>
 
     <select id="list" resultType="Category">
-        select * from category
+        select * from sky_take_out.category
         where status = 1
         <if test="type != null">
             and type = #{type}

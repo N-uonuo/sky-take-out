@@ -144,6 +144,7 @@ public class DishServiceImpl implements DishService {
             //批量插入菜品口味数据
             dishFlavorMapper.batchInsert(flavors);
         }
+
     }
 
     //根据分类id查询菜品

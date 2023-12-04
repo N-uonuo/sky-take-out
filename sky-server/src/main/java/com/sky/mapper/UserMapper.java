@@ -17,7 +17,7 @@ public interface UserMapper{
      * @param openid
      * @return
      */
-    @Select("select * from user where openid=#{openid}")
+    @Select("select * from sky_take_out.user where openid=#{openid}")
     User getByOpenid(String openid);
 
     /**
@@ -28,5 +28,7 @@ public interface UserMapper{
 
     //根据动态数量查询用户数量
     Integer countByMap(Map map);
+
+
 
 }

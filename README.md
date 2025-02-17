@@ -18,39 +18,6 @@
 - **编程语言**：Java
 - **框架**：Spring Boot
 - **数据库**：MySQL
-- **前端**：HTML, CSS, JavaScript
-
-## 安装与运行
-
-1. 克隆项目到本地：
-   ```bash
-   git clone https://github.com/你的用户名/外卖系统.git
-进入项目目录：
 
 
-cd 外卖系统
-
-导入数据库：
-
-    使用MySQL导入database.sql文件。
-
-运行项目：
-
-    使用IDE（如IntelliJ IDEA）运行Application类，或在终端中使用以下命令：
-
-
-    mvn spring-boot:run
-
-    打开浏览器，访问 http://localhost:8080。
-
-使用说明
-
-    用户可以通过注册页面创建新账户。
-    登录后，浏览可用餐厅并选择所需的餐品。
-    添加餐品到购物车，完成订单并进行支付。
-    在订单页面查看实时订单状态。
-
-贡献
-
-欢迎任何形式的贡献！如有建议或问题，请提交issue或拉取请求。
 
